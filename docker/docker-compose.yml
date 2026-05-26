@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: titan_gym
+      POSTGRES_PASSWORD: secret123
+      POSTGRES_DB: titangym
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ../backend/TitanGym.Api
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Database=titangym;Username=titan_gym;Password=secret123
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+
+volumes:
+  db-data:
