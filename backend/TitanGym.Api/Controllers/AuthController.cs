@@ -68,7 +68,7 @@ public class AuthController : ControllerBase
         var role = roles.FirstOrDefault() ?? "socio";
         var token = GenerateJwtToken(user, role);
 
-        return Ok(new AuthResponse(token, DateTime.UtcNow.AddHours(8), user.Email, role));
+        return Ok(new AuthResponse(token, DateTime.UtcNow.AddHours(8), user.Email ?? string.Empty, role));
     }
 
     private string GenerateJwtToken(ApplicationUser user, string role)
