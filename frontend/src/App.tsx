@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { login } from "./api/auth";
-import type { LoginRequest, AuthResponse } from "./types/auth";
+import React, { useState } from "react";
+import type { LoginRequest } from "./types/auth";
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<AuthResponse | null>(null);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("tg_auth");
-      if (raw) setUser(JSON.parse(raw) as AuthResponse);
-    } catch {}
-  }, []);
+  const { user, login, logout } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,13 +20,7 @@ function App() {
     };
 
     try {
-      const auth = await login(payload);
-      setUser(auth);
-      // Guardar token para llamadas futuras
-      try {
-        localStorage.setItem("tg_token", auth.token);
-        localStorage.setItem("tg_auth", JSON.stringify(auth));
-      } catch {}
+      await login(payload);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error inesperado");
     } finally {
@@ -80,16 +67,7 @@ function App() {
                 <p>Usuario: {user.email}</p>
                 <p>Rol: {user.role}</p>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setUser(null);
-                  try {
-                    localStorage.removeItem("tg_token");
-                    localStorage.removeItem("tg_auth");
-                  } catch {}
-                }}
-              >
+              <button type="button" onClick={() => logout()}>
                 Cerrar sesión
               </button>
             </>
