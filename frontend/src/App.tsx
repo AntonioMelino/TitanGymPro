@@ -22,6 +22,10 @@ function App() {
     try {
       const auth = await login(payload);
       setUser(auth);
+      // Guardar token para llamadas futuras
+      try {
+        localStorage.setItem('tg_token', auth.token);
+      } catch {}
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error inesperado");
     } finally {
