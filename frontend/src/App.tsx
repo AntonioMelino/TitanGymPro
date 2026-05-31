@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import type { LoginRequest } from "./types/auth";
 import { useAuth } from "./contexts/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const [email, setEmail] = useState("");
@@ -29,12 +32,17 @@ function App() {
   };
 
   return (
-    <main className="container">
-      <section className="login-card">
-        <h1>TitanGym Pro</h1>
-        <p>Inicia sesión para acceder al panel.</p>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <main className="container">
+              <section className="login-card">
+                <h1>TitanGym Pro</h1>
+                <p>Inicia sesión para acceder al panel.</p>
 
-        <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
           <label>
             Email
             <input
@@ -57,24 +65,37 @@ function App() {
 
           <button type="submit" disabled={loading}>
             {loading ? "Ingresando..." : "Ingresar"}
-          </button>
+                  </button>
 
-          {error ? <p className="error">{error}</p> : null}
-          {user ? (
-            <>
-              <div className="success">
-                <strong>Login exitoso</strong>
-                <p>Usuario: {user.email}</p>
-                <p>Rol: {user.role}</p>
-              </div>
-              <button type="button" onClick={() => logout()}>
-                Cerrar sesión
-              </button>
-            </>
-          ) : null}
-        </form>
-      </section>
-    </main>
+                  {error ? <p className="error">{error}</p> : null}
+                  {user ? (
+                    <>
+                      <div className="success">
+                        <strong>Login exitoso</strong>
+                        <p>Usuario: {user.email}</p>
+                        <p>Rol: {user.role}</p>
+                      </div>
+                      <button type="button" onClick={() => logout()}>
+                        Cerrar sesión
+                      </button>
+                    </>
+                  ) : null}
+                </form>
+              </section>
+            </main>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
