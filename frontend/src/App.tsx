@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { login } from "./api/auth";
 import type { LoginRequest, AuthResponse } from "./types/auth";
 
@@ -8,6 +8,13 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<AuthResponse | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("tg_auth");
+      if (raw) setUser(JSON.parse(raw) as AuthResponse);
+    } catch {}
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,7 +31,8 @@ function App() {
       setUser(auth);
       // Guardar token para llamadas futuras
       try {
-        localStorage.setItem('tg_token', auth.token);
+        localStorage.setItem("tg_token", auth.token);
+        localStorage.setItem("tg_auth", JSON.stringify(auth));
       } catch {}
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error inesperado");
@@ -66,11 +74,25 @@ function App() {
 
           {error ? <p className="error">{error}</p> : null}
           {user ? (
-            <div className="success">
-              <strong>Login exitoso</strong>
-              <p>Usuario: {user.email}</p>
-              <p>Rol: {user.role}</p>
-            </div>
+            <>
+              <div className="success">
+                <strong>Login exitoso</strong>
+                <p>Usuario: {user.email}</p>
+                <p>Rol: {user.role}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setUser(null);
+                  try {
+                    localStorage.removeItem("tg_token");
+                    localStorage.removeItem("tg_auth");
+                  } catch {}
+                }}
+              >
+                Cerrar sesión
+              </button>
+            </>
           ) : null}
         </form>
       </section>
