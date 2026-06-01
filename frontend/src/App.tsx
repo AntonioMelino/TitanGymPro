@@ -43,28 +43,28 @@ function App() {
                 <p>Inicia sesión para acceder al panel.</p>
 
                 <form onSubmit={handleSubmit}>
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-          </label>
+                  <label>
+                    Email
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      required
+                    />
+                  </label>
 
-          <label>
-            Contraseña
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </label>
+                  <label>
+                    Contraseña
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      required
+                    />
+                  </label>
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Ingresando..." : "Ingresar"}
+                  <button type="submit" disabled={loading}>
+                    {loading ? "Ingresando..." : "Ingresar"}
                   </button>
 
                   {error ? <p className="error">{error}</p> : null}

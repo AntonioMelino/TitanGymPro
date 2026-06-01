@@ -15,7 +15,9 @@ export async function login(payload: LoginRequest): Promise<AuthResponse> {
   if (!response.ok) {
     const body = await response.json().catch(() => null);
     const message = body?.message || body?.errors || "Error al iniciar sesión";
-    throw new Error(Array.isArray(message) ? message.join(", ") : String(message));
+    throw new Error(
+      Array.isArray(message) ? message.join(", ") : String(message),
+    );
   }
 
   return response.json();
